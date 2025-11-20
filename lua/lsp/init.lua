@@ -1,4 +1,6 @@
 -- LSP Configuration
+-- Note: For Neovim 0.11+, lspconfig shows deprecation warnings
+-- but still works. Consider migrating to vim.lsp.config in the future
 -- Set up Mason to manage LSP servers
 require("mason").setup({
   ui = {
@@ -24,23 +26,6 @@ end
 
 -- Attempt to install TypeScript server, capture errors gracefully
 pcall(ensure_ts_installed)
-
--- Set up Mason-lspconfig
-require("mason-lspconfig").setup({
-  -- Ensure these servers are automatically installed and set up
-  ensure_installed = {
-    "gopls",            -- Go
-    "html",             -- HTML
-    "cssls",            -- CSS
-    "angularls",        -- Angular
-    "jdtls",            -- Java
-    "jsonls",           -- JSON
-    "lua_ls",           -- Lua
-    "emmet_ls",         -- Emmet
-    -- Note: TypeScript server will be installed separately
-  },
-  automatic_installation = true,
-})
 
 -- Custom on_attach function for LSP servers
 -- This function is run when an LSP connects to a particular buffer
@@ -85,6 +70,23 @@ local on_attach = function(client, bufnr)
   end
 end
 
+-- Set up Mason-lspconfig with automatic server setup
+require("mason-lspconfig").setup({
+  -- Ensure these servers are automatically installed and set up
+  ensure_installed = {
+    "gopls",            -- Go
+    "html",             -- HTML
+    "cssls",            -- CSS
+    "angularls",        -- Angular
+    "jdtls",            -- Java
+    "jsonls",           -- JSON
+    "lua_ls",           -- Lua
+    "emmet_ls",         -- Emmet
+    "ts_ls",            -- TypeScript (updated name)
+  },
+  automatic_installation = true,
+})
+
 -- nvim-cmp supports additional completion capabilities
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
@@ -106,8 +108,8 @@ lspconfig.gopls.setup {
   },
 }
 
--- TypeScript/JavaScript (using ts_ls instead of deprecated tsserver)
-lspconfig.typescript.setup { -- Use typescript (ts_ls) instead of tsserver
+-- TypeScript/JavaScript (using ts_ls)
+lspconfig.ts_ls.setup {
   on_attach = on_attach,
   capabilities = capabilities,
   filetypes = { "typescript", "typescriptreact", "typescript.tsx", "javascript", "javascriptreact", "javascript.jsx" },
@@ -168,9 +170,27 @@ lspconfig.jsonls.setup {
   capabilities = capabilities,
   settings = {
     json = {
-      -- Remove schemastore dependency since it's not installed
-      -- schemas = require('schemastore').json.schemas(),
       validate = { enable = true },
+    },
+  },
+}
+
+-- Lua with better configuration for Neovim
+lspconfig.lua_ls.setup {
+  on_attach = on_attach,
+  capabilities = capabilities,
+  settings = {
+    Lua = {
+      diagnostics = {
+        globals = { "vim" },
+      },
+      workspace = {
+        library = vim.api.nvim_get_runtime_file("", true),
+        checkThirdParty = false,
+      },
+      telemetry = {
+        enable = false,
+      },
     },
   },
 }

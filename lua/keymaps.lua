@@ -28,7 +28,8 @@ map("n", "<C-Right>", ":vertical resize +2<CR>")
 -- Navigate buffers
 map("n", "<S-l>", ":bnext<CR>")
 map("n", "<S-h>", ":bprevious<CR>")
-map("n", "<leader>c", ":bd<CR>")  -- Close current buffer
+map("n", "<leader>bc", ":bd<CR>")  -- Close current buffer
+map("n", "<leader>bt", ":bd<CR>")  -- Close current buffer (alternative)
 
 -- Stay in indent mode when indenting
 map("v", "<", "<gv")
@@ -71,8 +72,8 @@ map("n", "<leader>fg", ":Telescope live_grep<CR>")
 map("n", "<leader>fb", ":Telescope buffers<CR>")
 map("n", "<leader>fh", ":Telescope help_tags<CR>")
 
--- Terminal toggle
-map("n", "<leader>t", ":ToggleTerm<CR>")
+-- Terminal toggle (changed to <leader>tt to avoid conflict with tab commands)
+map("n", "<leader>tt", ":ToggleTerm<CR>")
 map("t", "<Esc>", "<C-\\><C-n>") -- Exit terminal mode
 
 -- LSP related keymaps
@@ -90,9 +91,30 @@ map("n", "]d", ":lua vim.diagnostic.goto_next()<CR>")
 map("v", "<", "<gv")
 map("v", ">", ">gv")
 
--- Tabs management
+-- Buffer management (what you see in bufferline at the top)
+map("n", "<leader>bn", ":enew<CR>")   -- New buffer
+map("n", "<leader>bl", ":bnext<CR>")   -- Next buffer
+map("n", "<leader>bh", ":bprevious<CR>") -- Previous buffer
+map("n", "<leader>bo", ":%bd|e#|bd#<CR>")   -- Close all other buffers
+
+-- Actual Vim tabs management (if you ever use them)
 map("n", "<leader>tn", ":tabnew<CR>")   -- New tab
 map("n", "<leader>tc", ":tabclose<CR>")  -- Close tab
-map("n", "<leader>to", ":tabonly<CR>")   -- Close all other tabs
 map("n", "<leader>tl", ":tabnext<CR>")   -- Next tab
 map("n", "<leader>th", ":tabprevious<CR>") -- Previous tab
+
+-- Simple character jumping with unused keys (using 's' as base key)
+-- Use 's' followed by a character to jump directly to that character
+-- Note: This replaces the default 's' functionality (delete character and enter insert mode)
+map("n", "s", "f")  -- Jump directly to character
+map("x", "s", "f")  -- Jump in visual mode
+map("o", "s", "f")  -- Jump in operator-pending mode
+
+-- Navigate to next/previous occurrence of the same character
+-- Using dot and comma for next/previous is intuitive and easy to reach
+map("n", ".", ";")  -- Next occurrence of the same character
+map("n", ",", ",")  -- Previous occurrence of the same character
+map("x", ".", ";")  -- Next occurrence in visual mode
+map("x", ",", ",")  -- Previous occurrence in visual mode
+map("o", ".", ";")  -- Next occurrence in operator-pending mode
+map("o", ",", ",")  -- Previous occurrence in operator-pending mode
